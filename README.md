@@ -27,6 +27,7 @@
  
 ##   项目成果
 (后续仿真截图和运行结果会放在此处)
+![Gazebo 仿真](screenshots/在gazebo加载模型.png)
 
 
 ##   个人提升
