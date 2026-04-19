@@ -2,6 +2,15 @@
 <robot name="bot">
 
 
+    <!--robot footprint-->
+    <link name = "base_footprint"/>
+
+    <joint name = "base_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0.076" rpy="0 0 0"/>
+    </joint>
+
     <!--base link-->
     <link name="base_link">
         <visual>
@@ -9,6 +18,9 @@
             <geometry>
                 <cylinder radius="0.10" length="0.12"/>
             </geometry>
+            <material name="red">
+                <color rgba="1.0 0.0 0.0 1.0"/>
+            </material>
         </visual>
     </link>
 
@@ -17,7 +29,7 @@
     <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-            <cylinder radius="1.2" length="0.02"/>
+            <cylinder radius="0.02" length="0.02"/>
         </geometry>
         <material name="black">
             <color rgba="0.0 0.0 0.0 1.0"/>
@@ -32,5 +44,82 @@
         <origin xyz="0 0 0.075"/>
     </joint>
 
+    <link name ="imu_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size = "0.02 0.02 0.02"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <!-- imu joint-->
+    <joint name="imu_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="imu_link"/>
+        <origin xyz="0 0 0.02"/>
+    </joint>
+
+    <!-- right wheel link-->
+    <link name = "right_wheel_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="1.57079 0 0"/>
+            <geometry>
+                <cylinder radius="0.04" length="0.0032"/>
+            </geometry>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0"/>
+            </material>
+        </visual>
+    </link>
+
+    <!--right wheel joint-->
+    <joint name = "right_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="right_wheel_link"/>
+        <origin xyz="-0.02 -0.1 -0.06"/>
+        <axis xyz="0 1 0"/>
+    </joint>
+
+    <!-- left wheel link-->
+    <link name = "left_wheel_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="1.57079 0 0"/>
+            <geometry>
+                <cylinder radius="0.04" length="0.0032"/>
+            </geometry>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0"/>
+            </material>
+        </visual>
+    </link>
+
+    <!--left wheel joint-->
+    <joint name = "left_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="left_wheel_link"/>
+        <origin xyz="-0.02 0.1 -0.06"/>
+        <axis xyz="0 1 0"/>
+    </joint>
+
+    <!--caster link-->
+    <link name = "caster_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                    <sphere radius="0.016"/>
+            </geometry>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0"/>
+            </material>
+        </visual>
+    </link>
+
+    <!--caster joint-->
+    <joint name = "caster_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="caster_link"/>
+        <origin xyz="0.06 0 -0.076"/>
+    </joint>
 
 </robot>
