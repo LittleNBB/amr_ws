@@ -8,7 +8,7 @@
     <joint name = "base_joint" type="fixed">
         <parent link="base_footprint"/>
         <child link="base_link"/>
-        <origin xyz="0 0 0.076" rpy="0 0 0"/>
+        <origin xyz="0 0 0.11" rpy="0 0 0"/>
     </joint>
 
     <!--base link-->
@@ -18,6 +18,19 @@
             <geometry>
                 <cylinder radius="0.10" length="0.12"/>
             </geometry>
+            <collision>
+                <origin xyz="0 0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.10" length="0.12"/>
+                </geometry>
+                <material name = "blue">
+                    <color rgba="0.0 0.0 1.0 1.0"/>
+                </material>    
+            </collision>
+            <inertial>
+                <mass value="0.2"/>
+                <inertial ixx="0.0122666" ixy="0.0" ixz="0.0" iyy="0.0122666" iyz="0.0" izz="0.02"/>
+            </inertial>
             <material name="red">
                 <color rgba="1.0 0.0 0.0 1.0"/>
             </material>

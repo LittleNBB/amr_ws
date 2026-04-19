@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="bot">
+
+    <xacro:property name="base_radius" value="0.10" />
+    <xacro:property name="base_length" value="0.12" />
+    <xacro:property name="wheel_radius" value="0.04" />
+    <xacro:property name="wheel_length" value="0.02" />
+    <xacro:property name="wheel_ygap" value="0.01" />
+
+    <xacro:macro name="inertial_cylinder" params="mass radius length">
+        <inertial>
+            <mass value="${mass}"/>
+            <inertia ixx="${(1/12) * mass * (3*radius*radius + length*length)}" ixy="0" ixz="0"
+                     iyy="${(1/12) * mass * (3*radius*radius + length*length)}" iyz="0"
+                     izz="${(1/2) * mass * (radius*radius)}"/>
+        </inertial>
+    </xacro:macro>
+
+    <material name="red"><color rgba="1 0 0 1"/></material>
+    <material name="black"><color rgba="0 0 0 1"/></material>
+
+    <link name="base_footprint"/>
+    <joint name="base_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0.5" rpy="0 0 0"/>
+    </joint>
+
+    <link name="base_link">
+        <visual>
+            <geometry><cylinder radius="${base_radius}" length="${base_length}"/></geometry>
+            <material name="red"/>
+        </visual>
+        <collision>
+            <geometry><cylinder radius="${base_radius}" length="${base_length}"/></geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="1.0" radius="${base_radius}" length="${base_length}"/>
+    </link>
+
+    <!-- Left Wheel -->
+    <link name="left_wheel_link">
+        <visual>
+            <origin rpy="${pi/2} 0 0" xyz="0 0 0"/>
+            <geometry><cylinder radius="${wheel_radius}" length="${wheel_length}"/></geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="${pi/2} 0 0" xyz="0 0 0"/>
+            <geometry><cylinder radius="${wheel_radius}" length="${wheel_length}"/></geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="0.1" radius="${wheel_radius}" length="${wheel_length}"/>
+    </link>
+    <joint name="left_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="left_wheel_link"/>
+        <origin xyz="0 ${base_radius + wheel_ygap} -0.05" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+    </joint>
+
+    <!-- Right Wheel -->
+    <link name="right_wheel_link">
+        <visual>
+            <origin rpy="${pi/2} 0 0" xyz="0 0 0"/>
+            <geometry><cylinder radius="${wheel_radius}" length="${wheel_length}"/></geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="${pi/2} 0 0" xyz="0 0 0"/>
+            <geometry><cylinder radius="${wheel_radius}" length="${wheel_length}"/></geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="0.1" radius="${wheel_radius}" length="${wheel_length}"/>
+    </link>
+    <joint name="right_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="right_wheel_link"/>
+        <origin xyz="0 -${base_radius + wheel_ygap} -0.05" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+    </joint>
+
+    <!-- 支撑轮 (万向轮) -->
+    <link name="caster_link">
+        <visual>
+            <geometry><sphere radius="0.016"/></geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry><sphere radius="0.016"/></geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="0.1" radius="0.016" length="0.01"/> <!-- 简单借用宏或写个球体宏 -->
+    </link>
+
+    <joint name="caster_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="caster_link"/>
+        <!-- 位置放在底座前方，高度要算准，刚好触地 -->
+        <origin xyz="0.08 0 -0.076" rpy="0 0 0"/>
+    </joint>
+
+    <gazebo>
+        <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+            <left_joint>left_joint</left_joint>
+            <right_joint>right_joint</right_joint>
+            <wheel_separation>${(base_radius + wheel_ygap) * 2}</wheel_separation>
+            <wheel_radius>${wheel_radius}</wheel_radius>
+            <topic>cmd_vel</topic>
+            <odom_topic>odom</odom_topic>
+            <frame_id>odom</frame_id>
+            <child_frame_id>base_link</child_frame_id>
+        </plugin>
+        <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+            <topic>joint_states</topic>
+        </plugin>
+    </gazebo>
+</robot>
